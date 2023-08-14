@@ -1,0 +1,9 @@
+<launch>
+  <arg name="config_filename" default="/root/multiplot.xml" />
+  <node
+    pkg="rqt_multiplot"
+    name="$(anon rqt_multiplot)"
+    type="rqt_multiplot"
+    args="--multiplot-config $(arg config_filename)"
+    output="screen" />
+</launch>
