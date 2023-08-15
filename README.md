@@ -17,3 +17,6 @@ Having built the docker images, you may launch `rqt_multiplot` with the followin
 ```bash
 ros2 launch rqt_multiplot_bridge bringup.launch.py
 ```
+
+Use the `multiplot_config` and `bridge_config` arguments to pass your own custom
+configurations to the containers.

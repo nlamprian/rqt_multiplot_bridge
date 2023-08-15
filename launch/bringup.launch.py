@@ -32,7 +32,7 @@ def generate_launch_description():
 
     ld.add_action(
         DeclareLaunchArgument(
-            "multiplot_config_filename",
+            "multiplot_config",
             default_value="",
             description="multiplot config file to preload",
         )
@@ -40,7 +40,7 @@ def generate_launch_description():
 
     ld.add_action(
         DeclareLaunchArgument(
-            "bridge_config_filename",
+            "bridge_config",
             default_value="",
             description=(
                 "config file that specifies which topics to bridge. If left un"
@@ -49,40 +49,30 @@ def generate_launch_description():
         )
     )
 
-    multiplot_config_filename = LaunchConfiguration("multiplot_config_filename")
-    multiplot_config_condition = PythonExpression(
-        ["len('", multiplot_config_filename, "') > 0"]
-    )
-    multiplot_config_mount = PythonExpression(
-        ["'", multiplot_config_filename, ":/root/multiplot.xml'"]
-    )
+    multiplot_cfg = LaunchConfiguration("multiplot_config")
+    multiplot_cfg_cdn = PythonExpression(["len('", multiplot_cfg, "') > 0"])
+    multiplot_cfg_mnt = PythonExpression(["'", multiplot_cfg, ":/root/multiplot.xml'"])
 
     # Start multiplot
     cont_rmp_name, img_rmp_name = get_names(package_name, "multiplot")
     ld.add_action(
         ExecuteProcess(
-            condition=UnlessCondition(multiplot_config_condition),
-            cmd=cmd_base
-            + [
-                "--x11",
-                "--name",
-                cont_rmp_name,
-                img_rmp_name,
-            ],
+            condition=UnlessCondition(multiplot_cfg_cdn),
+            cmd=cmd_base + ["--x11", "--name", cont_rmp_name, img_rmp_name],
             name="multiplot",
             output="screen",
         )
     )
     ld.add_action(
         ExecuteProcess(
-            condition=IfCondition(multiplot_config_condition),
+            condition=IfCondition(multiplot_cfg_cdn),
             cmd=cmd_base
             + [
                 "--x11",
                 "--name",
                 cont_rmp_name,
                 "--volume",
-                multiplot_config_mount,
+                multiplot_cfg_mnt,
                 "--",
                 img_rmp_name,
             ],
@@ -91,20 +81,16 @@ def generate_launch_description():
         )
     )
 
-    bridge_config_filename = LaunchConfiguration("bridge_config_filename")
-    bridge_config_condition = PythonExpression(
-        ["len('", bridge_config_filename, "') > 0"]
-    )
-    bridge_config_mount = PythonExpression(
-        ["'", bridge_config_filename, ":/bridge.yaml'"]
-    )
+    bridge_cfg = LaunchConfiguration("bridge_config")
+    bridge_cfg_cdn = PythonExpression(["len('", bridge_cfg, "') > 0"])
+    bridge_cfg_mnt = PythonExpression(["'", bridge_cfg, ":/bridge.yaml'"])
 
     # Start dynamic bridge
     cont_dyn_name, img_dyn_name = get_names(package_name, "dynamic_bridge")
     cb_dyn = lambda event, context: shutdown_callback(cont_dyn_name, event, context)
     ld.add_action(
         GroupAction(
-            condition=UnlessCondition(bridge_config_condition),
+            condition=UnlessCondition(bridge_cfg_cdn),
             actions=[
                 TimerAction(
                     period=2.0,
@@ -126,7 +112,7 @@ def generate_launch_description():
     cb_param = lambda event, context: shutdown_callback(cont_param_name, event, context)
     ld.add_action(
         GroupAction(
-            condition=IfCondition(bridge_config_condition),
+            condition=IfCondition(bridge_cfg_cdn),
             actions=[
                 TimerAction(
                     period=2.0,
@@ -137,7 +123,7 @@ def generate_launch_description():
                                 "--name",
                                 cont_param_name,
                                 "--volume",
-                                bridge_config_mount,
+                                bridge_cfg_mnt,
                                 "--",
                                 img_param_name,
                             ],

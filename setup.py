@@ -4,7 +4,7 @@ package_name = "rqt_multiplot_bridge"
 
 setup(
     name=package_name,
-    version="0.0.1",
+    version="0.0.2",
     packages=find_packages(exclude=["docker"]),
     data_files=[
         ("share/ament_index/resource_index/packages", ["resource/" + package_name]),
