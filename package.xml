@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>rqt_multiplot_bridge</name>
+  <version>0.0.1</version>
+  <description>
+    rqt_multiplot provides a GUI plugin for visualizing numeric values in
+    multiple 2D plots using the Qwt plotting backend.
+    rqt_multiplot was implemented for ROS 1. This packages launches it in ROS 2
+    with the help of a bridge.
+  </description>
+  <maintainer email="info@nlamprian.me">Nick Lamprianidis</maintainer>
+  <license>GPLv3</license>
+  <author email="info@nlamprian.me">Nick Lamprianidis</author>
+
+  <exec_depend>launch</exec_depend>
+  <exec_depend>python3-rocker</exec_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
